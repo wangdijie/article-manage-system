@@ -1,0 +1,63 @@
+<div class="main_body" id="main_body">
+    <div class="breadcrub">
+        当前位置：文章管理>文章列表
+    </div>
+    <div class="pannel">
+        <span class="sel_label">请选择文章分类：</span>
+        <form id="form" method="get" action="/article/ShowArticles">
+            <select name="select" id="select" class="sel_opt">
+                <option value="">所有</option>
+                {{range .ArticleTypes}}
+                    {{if compare .Id $.CurrentTypeId}}
+                        <option selected="true" value={{.Id}}>{{.TypeName}}</option>
+                    {{else}}
+                        <option value={{.Id}}>{{.TypeName}}</option>
+                    {{end}}
+                {{end}}
+            </select>
+            <input type="submit" hidden="hidden" />
+        </form>
+        <table class="common_table">
+            <tr>
+                <th width="43%">文章标题</th>
+                <th width="10%">文章内容</th>
+                <th width="16%">添加时间</th>
+                <th width="7%">阅读量</th>
+                <th width="7%">删除</th>
+                <th width="7%">编辑</th>
+                <th width="10%">文章类型</th>
+            </tr>
+
+            {{range $index,$item := .Articles}}
+                <tr>
+                    <td>{{$item.Title}}</td>
+                    <td><a href="/article/ShowDetail?id={{$item.Id}}">查看详情</a></td>
+                    <td> {{$item.CreateTime}}</td>
+                    <td>{{$item.ViewCount}}</td>
+                    <td><a href="/article/DeleteArticle?id={{$item.Id}}" class="dels" onclick="return confirm('确定要删除吗？')">删除</a></td>
+                    <td><a href="/article/UpdateArticle?id={{$item.Id}}">编辑</a></td>
+                    <td>{{$item.ArticleType.TypeName}}</td>
+                </tr>
+            {{end}}
+
+        </table>
+
+        <ul class="pagenation">
+            <li><a href="/article/ShowArticles?pageIndex=1&select={{.CurrentTypeId}}">首页</a></li>
+            <!--视图 if else 语句--->
+            {{if compare .IsFirstPage true}}
+                <li>上一页</li>
+            {{else}}
+                <li><a href="/article/ShowArticles?pageIndex={{.PageIndex|ShowPrePage}}&select={{.CurrentTypeId}}">上一页 </a> </li>
+            {{end}}
+
+            {{if compare .IsLastPage true}}
+                <li>下一页</li>
+            {{else}}
+                <li> <a href="/article/ShowArticles?pageIndex={{.PageIndex|ShowNextPage}}&select={{.CurrentTypeId}}">下一页</a></li>
+            {{end}}
+            <li><a href="/article/ShowArticles?pageIndex={{.PageCount}}&select={{.CurrentTypeId}}">末页</a></li>
+            <li>共{{.TotalCount}}条记录/共{{.PageCount}}页/当前{{.PageIndex}}页</li>
+        </ul>
+    </div>
+</div>
